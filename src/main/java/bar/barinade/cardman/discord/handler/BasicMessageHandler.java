@@ -13,6 +13,7 @@ import bar.barinade.cardman.discord.serverconfig.service.ClaimantService;
 import bar.barinade.cardman.discord.serverconfig.service.GameKeyService;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Mentions;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -54,9 +55,10 @@ public class BasicMessageHandler extends ListenerAdapter {
 		}
 		
 		if (msg.startsWith(CMD_RESETCLAIMS) && hasPermission(event)) {
-			List<User> mentions = event.getMessage().getMentionedUsers();
-			if (mentions != null && !mentions.isEmpty()) {
-				User u = mentions.get(0);
+			Mentions mentions = event.getMessage().getMentions();
+			List<User> userMentions = mentions.getUsers();
+			if (userMentions != null && !userMentions.isEmpty()) {
+				User u = userMentions.get(0);
 				claims.freeClaim(guildId, u.getIdLong());
 				event.getChannel().sendMessage("Reset claims for user "+u.getId() + " | " +u.getName()).queue();
 			} else {

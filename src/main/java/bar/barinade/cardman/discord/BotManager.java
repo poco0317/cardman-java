@@ -1,7 +1,5 @@
 package bar.barinade.cardman.discord;
 
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.LoginException;
 
@@ -19,7 +17,6 @@ import bar.barinade.cardman.discord.handler.ServerConfigCommandHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
@@ -53,7 +50,7 @@ public class BotManager {
 		builder.disableCache(
 				CacheFlag.ACTIVITY,
 				CacheFlag.CLIENT_STATUS,
-				CacheFlag.EMOTE,
+				CacheFlag.EMOJI,
 				CacheFlag.MEMBER_OVERRIDES,
 				CacheFlag.ONLINE_STATUS,
 				CacheFlag.ROLE_TAGS,
@@ -65,8 +62,7 @@ public class BotManager {
 				GatewayIntent.DIRECT_MESSAGE_REACTIONS,
 				GatewayIntent.DIRECT_MESSAGE_TYPING,
 				GatewayIntent.DIRECT_MESSAGES,
-				GatewayIntent.GUILD_BANS,
-				GatewayIntent.GUILD_EMOJIS,
+				GatewayIntent.GUILD_EMOJIS_AND_STICKERS,
 				GatewayIntent.GUILD_INVITES,
 				GatewayIntent.GUILD_MEMBERS,
 				GatewayIntent.GUILD_MESSAGE_REACTIONS,

@@ -14,14 +14,16 @@ import bar.barinade.cardman.discord.serverconfig.service.GameKeyService;
 import bar.barinade.cardman.discord.serverconfig.service.ServerConfigService;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
 @Component
@@ -60,32 +62,33 @@ public class ServerConfigCommandHandler extends CommandHandlerBase {
 	
 	@Override
 	public CommandData[] getCommandsToUpsert() {
+		
 		return new CommandData[] {
-				new CommandData(NAME_CMD_NEWKEY, "Add a new key to the claim system")
+				Commands.slash(NAME_CMD_NEWKEY, "Add a new key to the claim system")
 				.addOption(OptionType.STRING, OPTION_NAME, "Name of the item being claimed", true)
 				.addOption(OptionType.STRING, OPTION_PLATFORM, "Name of the platform the key is for", true)
 				.addOption(OptionType.STRING, OPTION_KEY, "The key", true)
 				.addOption(OptionType.STRING, OPTION_STOREPAGE, "Link to the store page", false),
 				
-				new CommandData(NAME_CMD_KEYCHAN, "Set the output channel for keys.")
+				Commands.slash(NAME_CMD_KEYCHAN, "Set the output channel for keys.")
 				.addOption(OptionType.CHANNEL, OPTION_CHANNEL, "Text channel to send messages", true),
 				
-				new CommandData(NAME_CMD_AUDITCHAN, "Set the output channel for claimed keys.")
+				Commands.slash(NAME_CMD_AUDITCHAN, "Set the output channel for claimed keys.")
 				.addOption(OptionType.CHANNEL, OPTION_CHANNEL, "Text channel to send messages", true),
 				
-				new CommandData(NAME_CMD_RESET, "Reset claims")
+				Commands.slash(NAME_CMD_RESET, "Reset claims")
 					.addSubcommands(
 						new SubcommandData(NAME_CMD_ALL, "Reset all claims"),
 						new SubcommandData(NAME_CMD_USER, "Reset user claims")
 						.addOption(OptionType.USER, OPTION_USER, "User to reset", true)
 					),
 				
-				new CommandData(NAME_CMD_CLAIMLIMIT, "Set the claim limit for keys. 0 means unlimited.")
+				Commands.slash(NAME_CMD_CLAIMLIMIT, "Set the claim limit for keys. 0 means unlimited.")
 				.addOption(OptionType.INTEGER, OPTION_COUNT, "Claim limit", true)
 		};
 	}
 	
-	private boolean hasPermission(SlashCommandEvent event) {
+	private boolean hasPermission(SlashCommandInteractionEvent event) {
 		Member mmbr = event.getMember();
 		if (mmbr != null
 				&& !mmbr.getId().equals(ownerId)
@@ -99,7 +102,7 @@ public class ServerConfigCommandHandler extends CommandHandlerBase {
 		return true;
 	}
 	
-	void cmd_keyreset(SlashCommandEvent event) {
+	void cmd_keyreset(SlashCommandInteractionEvent event) {
 		if (!hasPermission(event))
 			return;
 		
@@ -122,7 +125,7 @@ public class ServerConfigCommandHandler extends CommandHandlerBase {
 				if (chanId != null) {
 					Guild guild = jda.getGuildById(guildId);
 					if (guild != null) {
-						MessageChannel txtchan = guild.getTextChannelById(chanId);
+						TextChannel txtchan = guild.getTextChannelById(chanId);
 						if (txtchan != null) {
 							txtchan.sendMessage("Reset all user claims for this server").queue();
 						}
@@ -148,7 +151,7 @@ public class ServerConfigCommandHandler extends CommandHandlerBase {
 				if (chanId != null) {
 					Guild guild = jda.getGuildById(guildId);
 					if (guild != null) {
-						MessageChannel txtchan = guild.getTextChannelById(chanId);
+						TextChannel txtchan = guild.getTextChannelById(chanId);
 						if (txtchan != null) {
 							String words = String.format("Reset claims for user %s", u.getAsMention());
 							txtchan.sendMessage(words).queue();
@@ -165,7 +168,7 @@ public class ServerConfigCommandHandler extends CommandHandlerBase {
 		}
 	}
 	
-	void cmd_keylimit(SlashCommandEvent event) {
+	void cmd_keylimit(SlashCommandInteractionEvent event) {
 		if (!hasPermission(event))
 			return;
 		
@@ -187,7 +190,7 @@ public class ServerConfigCommandHandler extends CommandHandlerBase {
 			if (chanId != null) {
 				Guild guild = jda.getGuildById(guildId);
 				if (guild != null) {
-					MessageChannel txtchan = guild.getTextChannelById(chanId);
+					TextChannel txtchan = guild.getTextChannelById(chanId);
 					if (txtchan != null) {
 						String words = String.format("Updated key claim limit to %d", count);
 						txtchan.sendMessage(words).queue();
@@ -199,7 +202,7 @@ public class ServerConfigCommandHandler extends CommandHandlerBase {
 		}
 	}
 	
-	void cmd_newkey(SlashCommandEvent event) {
+	void cmd_newkey(SlashCommandInteractionEvent event) {
 		if (!hasPermission(event))
 			return;
 		Long guildId = event.getGuild().getIdLong();
@@ -225,7 +228,7 @@ public class ServerConfigCommandHandler extends CommandHandlerBase {
 		
 	}
 	
-	void cmd_keychannel(SlashCommandEvent event) {
+	void cmd_keychannel(SlashCommandInteractionEvent event) {
 		if (!hasPermission(event))
 			return;
 		
@@ -235,7 +238,7 @@ public class ServerConfigCommandHandler extends CommandHandlerBase {
 			event.getHook().editOriginal("You must specify a Text Channel. Your channel was of type '"+chantype.toString()+"'").queue();
 			return;
 		}
-		final MessageChannel channel = event.getOption(OPTION_CHANNEL).getAsMessageChannel();
+		final GuildChannel channel = event.getOption(OPTION_CHANNEL).getAsChannel();
 		
 		Long outputId = configService.getOutputChannel(guildId);
 		configService.setOutputChannel(guildId, channel.getIdLong());
@@ -246,7 +249,7 @@ public class ServerConfigCommandHandler extends CommandHandlerBase {
 		}
 	}
 	
-	void cmd_keyaudit(SlashCommandEvent event) {
+	void cmd_keyaudit(SlashCommandInteractionEvent event) {
 		if (!hasPermission(event))
 			return;
 		
@@ -256,7 +259,7 @@ public class ServerConfigCommandHandler extends CommandHandlerBase {
 			event.getHook().editOriginal("You must specify a Text Channel. Your channel was of type '"+chantype.toString()+"'").queue();
 			return;
 		}
-		final MessageChannel channel = event.getOption(OPTION_CHANNEL).getAsMessageChannel();
+		final GuildChannel channel = event.getOption(OPTION_CHANNEL).getAsChannel();
 		
 		configService.setAuditChannel(guildId, channel.getIdLong());
 		event.getHook().editOriginal("Key claim auditing channel set to '"+channel.getName()+"'").queue();

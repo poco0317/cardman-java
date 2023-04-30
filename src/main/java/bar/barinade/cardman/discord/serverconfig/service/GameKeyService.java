@@ -25,9 +25,9 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageHistory;
-import net.dv8tion.jda.api.interactions.components.Button;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 @Service
 public class GameKeyService {
@@ -172,7 +172,7 @@ public class GameKeyService {
 			return;
 		}
 		
-		MessageChannel txtchan = guild.getTextChannelById(chanId);
+		TextChannel txtchan = guild.getTextChannelById(chanId);
 		if (txtchan == null) {
 			m_logger.info("Text channel {} could not be retrieved for guild {}", chanId, guildId);
 			return;
@@ -218,7 +218,7 @@ public class GameKeyService {
 			return;
 		}
 		
-		MessageChannel txtchan = guild.getTextChannelById(chanId);
+		TextChannel txtchan = guild.getTextChannelById(chanId);
 		if (txtchan == null) {
 			m_logger.info("Text channel {} could not be retrieved for guild {}", chanId, guildId);
 			return;
@@ -273,7 +273,7 @@ public class GameKeyService {
 			return;
 		}
 		
-		MessageChannel txtchan = guild.getTextChannelById(chanId);
+		TextChannel txtchan = guild.getTextChannelById(chanId);
 		if (txtchan == null) {
 			m_logger.info("Text channel {} could not be retrieved for guild {}", chanId, guildId);
 			return;
@@ -289,7 +289,7 @@ public class GameKeyService {
 		m_logger.info("Posted single message for guild {}", guildId);
 	}
 	
-	private void recursivelyGetChannelHistoryAndDeleteOwnPosts(MessageChannel c, Callable<Void> whenDone, Consumer<Throwable> whenFailed) {
+	private void recursivelyGetChannelHistoryAndDeleteOwnPosts(TextChannel c, Callable<Void> whenDone, Consumer<Throwable> whenFailed) {
 		MessageHistory history = gethistory(c);
 		
 		JDA jda = c.getJDA();
@@ -329,7 +329,7 @@ public class GameKeyService {
 	}
 	
 	
-	private MessageHistory gethistory(MessageChannel c) {
+	private MessageHistory gethistory(TextChannel c) {
 		long id = c.getIdLong();
 		if (!histories.containsKey(id)) {
 			histories.put(id, c.getHistory());
@@ -345,7 +345,7 @@ public class GameKeyService {
 			if (chanId != null) {
 				Guild guild = jda.getGuildById(guildId);
 				if (guild != null) {
-					MessageChannel txtchan = guild.getTextChannelById(chanId);
+					TextChannel txtchan = guild.getTextChannelById(chanId);
 					if (txtchan != null) {
 						txtchan.sendMessage(msg).queue();
 					}

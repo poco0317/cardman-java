@@ -10,7 +10,7 @@ import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 
@@ -48,7 +48,7 @@ public abstract class CommandHandlerBase extends ListenerAdapter {
 	public abstract CommandData[] getCommandsToUpsert();
 	
 	@Override
-	public void onSlashCommand(SlashCommandEvent event) {
+	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 		
 		final String name = event.getName();
 		final String group = event.getSubcommandGroup();
