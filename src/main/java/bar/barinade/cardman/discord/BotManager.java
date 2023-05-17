@@ -54,7 +54,8 @@ public class BotManager {
 				CacheFlag.MEMBER_OVERRIDES,
 				CacheFlag.ONLINE_STATUS,
 				CacheFlag.ROLE_TAGS,
-				CacheFlag.VOICE_STATE
+				CacheFlag.VOICE_STATE,
+				CacheFlag.STICKER
 				);
 		
 		// even more stuff we dont need
