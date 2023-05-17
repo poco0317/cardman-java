@@ -62,7 +62,7 @@ public class BotManager {
 		builder.disableIntents(
 				GatewayIntent.DIRECT_MESSAGE_REACTIONS,
 				GatewayIntent.DIRECT_MESSAGE_TYPING,
-				GatewayIntent.DIRECT_MESSAGES,
+				//GatewayIntent.DIRECT_MESSAGES,
 				GatewayIntent.GUILD_EMOJIS_AND_STICKERS,
 				GatewayIntent.GUILD_INVITES,
 				GatewayIntent.GUILD_MEMBERS,
@@ -73,6 +73,8 @@ public class BotManager {
 				GatewayIntent.GUILD_VOICE_STATES,
 				GatewayIntent.GUILD_WEBHOOKS
 				);
+		
+		builder.enableIntents(GatewayIntent.MESSAGE_CONTENT);
 		
 		// stuff that might matter
 		builder.setChunkingFilter(ChunkingFilter.NONE);
