@@ -42,7 +42,7 @@ public class BasicMessageHandler extends ListenerAdapter {
 	public void onMessageReceived(MessageReceivedEvent event) {
 		
 		// must be in a server
-		if (event.getGuild() == null) {
+		if (!event.isFromGuild()) {
 			return;
 		}
 		
